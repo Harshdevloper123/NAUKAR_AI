@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naukar Text Assistant</title>
+    <link rel="stylesheet" href="text.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #dd8266, #ff70a7, #7623d5, #41a0ee, rgb(255, 255, 98));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+  
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .messageBox {
+            width: fit-content;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #2d2d2d;
+            padding: 0 15px;
+            border-radius: 10px;
+            border: 1px solid rgb(63, 63, 63);
+        }
+        .messageBox:focus-within {
+            border: 1px solid rgb(110, 110, 110);
+        }
+
+        .fileUploadWrapper {
+            width: fit-content;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+  
+        #file {
+            display: none;
+        }
+        .fileUploadWrapper label {
+            cursor: pointer;
+            width: fit-content;
+            height: fit-content;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .fileUploadWrapper label svg {
+            height: 18px;
+        }
+        .fileUploadWrapper label svg path {
+            transition: all 0.3s;
+        }
+        .fileUploadWrapper label svg circle {
+            transition: all 0.3s;
+        }
+        .fileUploadWrapper label:hover svg path {
+            stroke: #fff;
+        }
+        .fileUploadWrapper label:hover svg circle {
+            stroke: #fff;
+            fill: #3c3c3c;
+        }
+        .fileUploadWrapper label:hover .tooltip {
+            display: block;
+            opacity: 1;
+        }
+        .tooltip {
+            position: absolute;
+            top: -40px;
+            display: none;
+            opacity: 0;
+            color: white;
+            font-size: 10px;
+            text-wrap: nowrap;
+            background-color: #000;
+            padding: 6px 10px;
+            border: 1px solid #3c3c3c;
+            border-radius: 5px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.596);
+            transition: all 0.3s;
+        }
+
+        #messageInput {
+            width: 400px;
+            height: 40px;
+            background-color: transparent;
+            outline: none;
+            border: none;
+            padding-left: 10px;
+            color: white;
+        }
+        #messageInput:focus ~ #sendButton svg path,
+        #messageInput:valid ~ #sendButton svg path {
+            fill: #3c3c3c;
+            stroke: white;
+        }
+
+        #sendButton {
+            width: fit-content;
+            height: 100%;
+            background-color: transparent;
+            outline: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #sendButton svg {
+            height: 18px;
+            transition: all 0.3s;
+        }
+        #sendButton svg path {
+            transition: all 0.3s;
+        }
+        #sendButton:hover svg path {
+            fill: #3c3c3c;
+            stroke: white;
+        }
+
+        /* Media queries */
+        @media (max-width: 599px) {
+            #messageInput {
+                width: 200px;
+            }
+            body {
+                overflow: hidden;
+                flex: none;
+                width: 100%;
+                height: 50vh;
+                padding: 130px;
+            }
+        }
+        /* @media (min-width: 600px) and (max-width: 1024px) {
+            #messageInput {
+                width: 300px;
+            }
+        } */
+    </style>
+</head>
+<body>
+<p>Under Construction</p>
+<div class="search">
+    <div class="messageBox">
+        <input required="" placeholder="Search..." type="text" id="messageInput"/>
+        <button id="sendButton">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
+                <path
+                    fill="none"
+                    d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                ></path>
+                <path
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    stroke-width="33.67"
+                    stroke="#6c6c6c"
+                    d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                ></path>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<div id="results" style="background: transparent;"></div>
+
+<script>
+    document.getElementById('sendButton').addEventListener('click', function() {
+        var query = document.getElementById('messageInput').value;
+        if (query) {
+            var url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+            window.open(url, '_blank');
+        }
+    });
+
+    window.addEventListener('load', function() {
+        var backButton = document.createElement('button');
+        backButton.textContent = 'Back';
+        backButton.onclick = function() {
+            window.history.back();
+        };
+    });
+</script>
+</body>
+</html>

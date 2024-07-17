@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME Naukar AI</title>
+    <link rel="stylesheet" href="home.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #dd8266, #ff70a7, #7623d5, #41a0ee, rgb(255, 255, 98));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .menus {
+            display: flex;
+        }
+
+        .app {
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            border: 2px solid black;
+            height: 60vh;
+            border-radius: 5%;
+            padding: 25px;
+        }
+
+        button {
+            margin-top: 50px;
+        }
+
+        button, button::after {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: transparent;
+            position: relative;
+        }
+
+        button::after {
+            --move1: inset(50% 50% 50% 50%);
+            --move2: inset(31% 0 40% 0);
+            --move3: inset(39% 0 15% 0);
+            --move4: inset(45% 0 40% 0);
+            --move5: inset(45% 0 6% 0);
+            --move6: inset(14% 0 61% 0);
+            clip-path: var(--move1);
+            content: 'GO';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: block;
+        }
+
+        button:hover::after {
+            animation: glitch_4011 1s;
+            text-shadow: 10px 10px 10px black;
+            animation-timing-function: steps(2, end);
+            text-shadow: -3px -3px 0px #1df2f0, 3px 3px 0px #E94BE8;
+            background-color: transparent;
+            border: 3px solid rgb(0, 255, 213);
+        }
+
+        button:hover {
+            text-shadow: -1px -1px 0px #1df2f0, 1px 1px 0px #E94BE8;
+            background-color: transparent;
+            border: 1px solid rgb(0, 255, 213);
+            box-shadow: 0px 10px 10px -10px rgb(0, 255, 213);
+        }
+
+        @keyframes glitch_4011 {
+            0% {
+                clip-path: var(--move1);
+                transform: translate(0px, -10px);
+            }
+            10% {
+                clip-path: var(--move2);
+                transform: translate(-10px, 10px);
+            }
+            20% {
+                clip-path: var(--move3);
+                transform: translate(10px, 0px);
+            }
+            30% {
+                clip-path: var(--move4);
+                transform: translate(-10px, 10px);
+            }
+            40% {
+                clip-path: var(--move5);
+                transform: translate(10px, -10px);
+            }
+            50% {
+                clip-path: var(--move6);
+                transform: translate(-10px, 10px);
+            }
+            60% {
+                clip-path: var(--move1);
+                transform: translate(10px, -10px);
+            }
+            70% {
+                clip-path: var (--move3);
+                transform: translate(-10px, 10px);
+            }
+            80% {
+                clip-path: var (--move2);
+                transform: translate(10px, -10px);
+            }
+            90% {
+                clip-path: var (--move4);
+                transform: translate(-10px, 10px);
+            }
+            100% {
+                clip-path: var (--move1);
+                transform: translate(0);
+            }
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+            border: 3px #1df2f0;
+        }
+
+        .popup {
+            width: 90%;
+            max-width: 400px;
+            border-radius: 6px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            visibility: hidden;
+            text-align: center;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            background: transparent;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.4s, top 0.4s, visibility 0s 0.4s;
+            color: #fff;
+        }
+
+        .popup.visible {
+            transform: translate(-50%, -50%) scale(1);
+            visibility: visible;
+            transition-delay: 0s;
+        }
+
+        .popup.visible ~ .container {
+            filter: blur(5px);
+        }
+
+        .popup h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 30px 0 10px;
+            color: #000;
+        }
+
+        .popup ul li {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
+
+        .popup ul li a {
+            color: black;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-evenly;
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        .open-popup {
+            visibility: visible;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .close-popup {
+            visibility: hidden;
+        }
+
+        i {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            button, button::after {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+
+            .popup h2 {
+                font-size: 1.2rem;
+            }
+
+            .popup ul li a {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            button, button::after {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            .popup h2 {
+                font-size: 1rem;
+            }
+
+            .popup ul li a {
+                font-size: 0.8rem;
+            }
+
+            i {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/d5c2b12eef.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="app">
+        <div class="menus">
+            <h1 class="menu-bar">
+                <i class="fa-solid fa-bars" onclick="toggleMenu()"></i>
+            </h1>
+        </div>
+        <div class="popup" id="menuPopup">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="create acc.html">Crate Account</a></li>
+                <li><a href="#">Report problem</a></li>
+                <li><a href="index.html">Back TO index</a></li>
+            </ul>
+            <button onclick="toggleMenu()" style="width: 200px;">Close</button>
+        </div>
+        <br>
+        <h1>Choose one</h1>
+        <button><a href="voice.html">Voice assistant</a></button>
+        <br>
+        <button><a href="text.html">Chat assistant</a></button>
+    </div>
+    <script src="home.js">
+        const username = localStorage.getItem('username');
+        const email = localStorage.getItem('email');
+        const password = localStorage.getItem('password');
+
+        console.log(username)
+
+        let menuPopup = document.getElementById('menuPopup');
+
+        function toggleMenu() {
+            menuPopup.classList.toggle('open-popup');
+        }
+
+        function hideMenu() {
+            menuPopup.classList.remove('open-popup');
+        }
+    </script>
+</body>
+</html>

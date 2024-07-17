@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naukar THE AI Assistant</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Roboto Mono", monospace;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #dd8266, #ff70a7, #7623d5, #41a0ee);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .main .image-container {
+            padding: 10px;
+        }
+
+        .main .image-container h1 {
+            color: #00bcd4;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 40px;
+        }
+
+        .main .image-container p {
+            color: #324042;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main .input {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40vw;
+            height: 50px;
+            border-radius: 20px;
+            background: rgba(202, 253, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .main .input .talk {
+            background: transparent;
+            outline: none;
+            border: none;
+            width: 50px;
+            height: 50px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .main .input .talk i {
+            font-size: 20px;
+            color: #aed0d0;
+        }
+
+        .main .input .content {
+            color: #000000;
+            font-size: 15px;
+            margin-right: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                max-width: 400px;
+                width: 99%;
+            }
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+
+        #history {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40vw;
+            height: 50px;
+            border-radius: 20px;
+            background: rgba(202, 253, 255, 0.5);
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<body>
+    <div class="app">
+        <section class="main">
+            <div class="image-container">
+                <h1>Naukar AI</h1>
+                <p style="color: black;">I am Naukar AI made by <b>Harsh</b>, how may I help you?</p>
+            </div>
+            <div class="input">
+                <button class="talk"><i class="fas fa-microphone-alt"></i></button>
+                <h1 class="content">Give command</h1>
+            </div>
+            <br>
+            <button onclick="passCheck()" id="history">See history</button>
+        </section>
+        <div class="history hide">
+            <h1>History</h1>
+            <div id="historyResult" style="color: black;"></div> <!-- Displaying results in history section -->
+        </div>
+    </div>
+    <script>
+        const btn = document.querySelector('.input');
+        const content = document.querySelector('.content');
+        const historyResult = document.querySelector('#historyResult');
+
+        function speak(text) {
+            const text_speak = new SpeechSynthesisUtterance(text);
+            text_speak.rate = 1;
+            text_speak.volume = 1;
+            text_speak.pitch = 1;
+            window.speechSynthesis.speak(text_speak);
+        }
+
+        function wishMe() {
+            const hour = new Date().getHours();
+            if (hour < 12) {
+                speak("Good morning, boss...");
+            } else if (hour < 17) {
+                speak("Good afternoon, master...");
+            } else {
+                speak("Good evening, boss...");
+            }
+        }
+
+        function requestPermissions() {
+            return new Promise((resolve, reject) => {
+                navigator.permissions.query({ name: 'microphone' })
+                    .then(permissionStatus => {
+                        if (permissionStatus.state === 'granted') {
+                            resolve();
+                        } else {
+                            navigator.mediaDevices.getUserMedia({ audio: true })
+                                .then(stream => {
+                                    stream.getTracks().forEach(track => track.stop());
+                                    resolve();
+                                })
+                                .catch(reject);
+                        }
+                    })
+                    .catch(reject);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            requestPermissions()
+                .then(() => {
+                    wishMe();
+                    speak("Naukar AI at your service.");
+                })
+                .catch((error) => {
+                    console.error("Permission denied:", error);
+                    speak("I could not get microphone access. Please check your microphone settings.");
+                });
+        });
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            content.textContent = transcript;
+            takeCommand(transcript);
+        };
+
+        btn.addEventListener('click', () => {
+            content.textContent = "Listening...";
+            recognition.start();
+        });
+
+        function checkAppAvailability(url) {
+            return new Promise((resolve) => {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+
+                document.body.appendChild(iframe);
+
+                const timeout = setTimeout(() => {
+                    document.body.removeChild(iframe);
+                    resolve(false);
+                }, 2000);
+
+                iframe.onload = () => {
+                    clearTimeout(timeout);
+                    document.body.removeChild(iframe);
+                    resolve(true);
+                };
+            });
+        }
+
+        async function openApp(appUrl, appName) {
+            const isAppAvailable = await checkAppAvailability(appUrl);
+            if (isAppAvailable) {
+                window.location.href = appUrl;
+                speak(`Opening ${appName}...`);
+            } else {
+                speak(`I could not find ${appName}.`);
+            }
+        }
+
+        function takeCommand(message) {
+            if (message.includes('how are you') || message.includes('hello') || message.includes('hey')) {
+                speak("Hello sir, how can I assist you?");
+            } else if (message.includes('who are you') || message.includes('tell me about')) {
+                speak("I am a chat assistant created by HARSH. I can perform tasks like opening applications or searching for information.");
+            } else if (message.includes("open google")) {
+                openApp("google://", "Google");
+            } else if (message.includes("open youtube")) {
+                openApp("youtube://", "YouTube");
+            } else if (message.includes("open facebook")) {
+                openApp("fb://", "Facebook");
+            } else if (message.includes("open instagram")) {
+                openApp("instagram://", "Instagram");
+            } else if (message.includes("open twitter")) {
+                openApp("twitter://", "Twitter");
+            } else if (message.includes("open linkedin")) {
+                openApp("linkedin://", "LinkedIn");
+            } else if (message.includes("open whatsapp")) {
+                openApp("whatsapp://", "WhatsApp");
+            } else if (message.includes("open vs code") || message.includes("open visual studio code")) {
+                openApp("vscode://", "Visual Studio Code");
+            } else if (message.includes("open free fire")) {
+                openApp("freefire://", "Free Fire");
+            } else if (message.includes("open amazon")) {
+                openApp("amazon://", "Amazon");
+            } else if (message.includes("open flipkart")) {
+                openApp("flipkart://", "Flipkart");
+            } else if (message.includes("open shopify")) {
+                openApp("shopify://", "Shopify");
+            } else if (message.includes("open meesho")) {
+                openApp("meesho://", "Meesho");
+            } else if (message.includes('time')) {
+                const time = new Date().toLocaleTimeString();
+                speak("The current time is " + time);
+            } else if (message.includes('date')) {
+                const date = new Date().toLocaleDateString();
+                speak("Today's date is " + date);
+            } else if (message.includes('notepad')) {
+                try {
+                    window.open('notepad.exe');
+                    speak("Opening Notepad...");
+                } catch {
+                    window.open("https://www.google.com/search?q=notepad");
+                    speak("Notepad is not installed. Searching online.");
+                }
+            } else if (message.includes('calculator')) {
+                try {
+                    window.open('calc.exe');
+                    speak("Opening Calculator...");
+                } catch {
+                    window.open("https://www.google.com/search?q=calculator");
+                    speak("Calculator is not installed. Searching online.");
+                }
+            } else if (message.includes('game')) {
+                window.open("https://ev.io");
+                speak("Opening ev.io...");
+            } else {
+                window.open(`https://www.google.com/search?q=${message}`);
+                speak("I found some information on Google for " + message);
+            }
+
+            saveToHistory(message);
+        }
+
+        let newpass = localStorage.getItem("userPASS") || prompt("Create a Password");
+        if (!localStorage.getItem("userPASS")) {
+            localStorage.setItem("userPASS", newpass);
+        }
+
+        function passCheck() {
+            let passcheckin = prompt("Enter the Password You created");
+
+            const app = document.querySelector(".app");
+            const mainSection = app.querySelector(".main");
+            const historySection = app.querySelector(".history");
+
+            if (newpass === passcheckin) {
+                console.log("Password is correct");
+                mainSection.classList.add("hide");
+                historySection.classList.remove("hide");
+                displayHistory();
+            } else {
+                while (newpass !== passcheckin) {
+                    passcheckin = prompt("Incorrect. Enter the Password You created");
+                }
+                console.log("Password is correct");
+                mainSection.classList.add("hide");
+                historySection.classList.remove("hide");
+                displayHistory();
+            }
+        }
+
+        function saveToHistory(query) {
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            history.push({ query });
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+        }
+
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            historyResult.innerHTML = ''; // Clear previous history code 
+            history.forEach(item => {
+                historyResult.innerHTML += `<p>You said: ${item.query}</p>`;
+            });
+        }
+    </script>
+
+</body>
+
+</html>
